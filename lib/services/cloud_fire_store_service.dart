@@ -4,6 +4,7 @@ import 'package:chat_app/modal/chat_modal.dart';
 import 'package:chat_app/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 
 import '../modal/user_model.dart';
 
@@ -25,6 +26,7 @@ class CloudFireStoreService {
       'isOnline': false,
       'isTyping': false,
     });
+    Get.offAndToNamed('/Auth');
   }
 
   // Read data for current user - profile

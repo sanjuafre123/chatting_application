@@ -334,17 +334,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     height: h * 0.04,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 12.0, right: 12,bottom: 5),
+                    padding:
+                        const EdgeInsets.only(left: 12.0, right: 12, bottom: 5),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-
                         const Icon(
                           Icons.menu,
                           color: Colors.white,
                           size: 25,
                         ),
-                        Text('Chats',style: TextStyle(color: Colors.white,fontSize: 22),),
+                        Text(
+                          'Chats',
+                          style: TextStyle(color: Colors.white, fontSize: 22),
+                        ),
                         CircleAvatar(
                           radius: h * 0.023,
                           backgroundImage: AuthService.authService
@@ -399,7 +402,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        border: Border.all(color: Colors.black,width: 0.5),
+                        border: Border.all(color: Colors.black, width: 0.5),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(w * 0.10),
                           topRight: Radius.circular(w * 0.10),
@@ -482,7 +485,7 @@ class _HomeBottomNavigationState extends State<HomeBottomNavigation> {
       _selectedIndex = index;
 
       if (_selectedIndex == 3) {
-        Get.toNamed('/set')?.then((_) {
+        Get.toNamed('/profile')?.then((_) {
           setState(() {
             _selectedIndex = 0;
           });
@@ -523,10 +526,11 @@ class _HomeBottomNavigationState extends State<HomeBottomNavigation> {
         ),
         BottomNavigationBarItem(
           icon: InkWell(
-              onTap: () {
-                Get.offAndToNamed('/profile');
-              },
-              child: Icon(Icons.settings)),
+            onTap: () {
+              Get.offAndToNamed('/profile');
+            },
+            child: const Icon(Icons.settings),
+          ),
           label: 'Settings',
         ),
       ],

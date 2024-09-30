@@ -35,7 +35,7 @@ class SignUp extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 22,
               ),
               // Enhanced Text Fields with Shadow and Rounded Corners
@@ -67,7 +67,7 @@ class SignUp extends StatelessWidget {
                   obscureText: true,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 22,
               ),
               FadeIn(
@@ -87,9 +87,11 @@ class SignUp extends StatelessWidget {
                   onTap: () {
                     if (controller.txtPassword.text ==
                         controller.txtConfirm.text) {
-                      AuthService.authService.createAccountUsingEmailAndPassword(
-                          controller.txtEmail.text,
-                          controller.txtPassword.text);
+                      AuthService.authService
+                          .createAccountUsingEmailAndPassword(
+                        controller.txtEmail.text,
+                        controller.txtPassword.text,
+                      );
 
                       UserModel user = UserModel(
                         name: controller.txtName.text,
@@ -104,8 +106,6 @@ class SignUp extends StatelessWidget {
 
                       CloudFireStoreService.cloudFireStoreService
                           .insertUserIntoFireStore(user);
-
-                      Get.offAndToNamed('/home');
                       controller.txtEmail.clear();
                       controller.txtName.clear();
                       controller.txtPassword.clear();
@@ -117,7 +117,7 @@ class SignUp extends StatelessWidget {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      gradient: LinearGradient(
+                      gradient: const LinearGradient(
                         colors: [
                           Color(0xff1f319d),
                           Color(0xff1133a6),
@@ -127,7 +127,7 @@ class SignUp extends StatelessWidget {
                         BoxShadow(
                           color: Colors.blue.withOpacity(0.2),
                           blurRadius: 10,
-                          offset: Offset(0, 5),
+                          offset: const Offset(0, 5),
                         )
                       ],
                     ),
@@ -220,7 +220,7 @@ class SignUp extends StatelessWidget {
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),
             blurRadius: 10,
-            offset: Offset(0, 5),
+            offset: const Offset(0, 5),
           )
         ],
         borderRadius: BorderRadius.circular(12),
@@ -254,7 +254,7 @@ class SignUp extends StatelessWidget {
         height: height,
         width: width,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [
               Color(0xff1f319d),
               Color(0xff1133a6),
@@ -265,7 +265,7 @@ class SignUp extends StatelessWidget {
             BoxShadow(
               color: Colors.grey.withOpacity(0.3),
               blurRadius: 10,
-              offset: Offset(0, 5),
+              offset: const Offset(0, 5),
             )
           ],
         ),
@@ -287,10 +287,10 @@ class FadeIn extends StatelessWidget {
   final Duration duration;
 
   const FadeIn({
-    Key? key,
+    super.key,
     required this.child,
     this.duration = const Duration(milliseconds: 800),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

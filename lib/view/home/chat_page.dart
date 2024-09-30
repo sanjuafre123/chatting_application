@@ -118,8 +118,8 @@ class _ChatPageState extends State<ChatPage> {
                                           AuthService.authService
                                               .getCurrentUser()!
                                               .email!)
-                                      ? Color(0xff3572EF)
-                                      : Color(0xffACE2E1),
+                                      ? const Color(0xff3572EF)
+                                      : const Color(0xffACE2E1),
                                   borderRadius: (chatList[index].sender ==
                                           AuthService.authService
                                               .getCurrentUser()!
@@ -475,25 +475,23 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ],
         ),
-        SizedBox(
-          width: width * 0.032,
-        ),
+        const Spacer(),
         IconButton(
             onPressed: () {},
-            icon: Icon(
+            icon: const Icon(
               Icons.call,
               color: Colors.grey,
             )),
         IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.videocam_outlined,
-              size: 28,
-              color: Colors.grey,
-            )),
-        const Spacer(),
-        // _buildCallAndVideoButtons(),
+          onPressed: () {},
+          icon: const Icon(
+            Icons.videocam_outlined,
+            size: 28,
+            color: Colors.grey,
+          ),
+        ),
         PopupMenuButton(
+          color: Colors.white,
           itemBuilder: (context) => [
             const PopupMenuItem(
               value: 'View Account',
@@ -553,6 +551,7 @@ class _ChatPageState extends State<ChatPage> {
               chatController.receiverEmail.value,
               context,
             );
+            chatController.toggleBar.value = false;
           },
           icon: const Icon(
             Icons.delete,
@@ -577,6 +576,7 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ),
         PopupMenuButton<String>(
+          color: Colors.white,
           onSelected: (value) {
             switch (value) {
               case 'Info':
@@ -590,7 +590,6 @@ class _ChatPageState extends State<ChatPage> {
                 chatController.messageController.value =
                     chatController.docId.value;
                 chatController.toggleBar.value = false;
-
                 break;
               case 'Pin':
                 break;

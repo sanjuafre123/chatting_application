@@ -9,7 +9,6 @@ import '../../../services/auth_service.dart';
 import '../../../services/cloud_fire_store_service.dart';
 import '../../../services/google_auth_service.dart';
 
-
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
@@ -23,7 +22,7 @@ class ProfilePage extends StatelessWidget {
             onTap: () {
               Get.offAndToNamed('/home');
             },
-            child: Icon(Icons.arrow_back)),
+            child: const Icon(Icons.arrow_back)),
       ),
       body: FutureBuilder(
         future: CloudFireStoreService.cloudFireStoreService
@@ -116,13 +115,40 @@ class ProfilePage extends StatelessWidget {
                       subtitle: 'English (device\'s language)'),
                   InkWell(
                     onTap: () async {
-                      await AuthService.authService.signOutUser();
-                      await GoogleAuthService.googleAuthService
-                          .signOutFromGoogle();
-                      User? user = AuthService.authService.getCurrentUser();
-                      if (user == null) {
-                        Get.offAndToNamed('/signIn');
-                      }
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Logout'),
+                          content: const Text('Do you really want to logout'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Get.back();
+                              },
+                              child: const Text(
+                                'Cancel',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                await AuthService.authService.signOutUser();
+                                await GoogleAuthService.googleAuthService
+                                    .signOutFromGoogle();
+                                User? user =
+                                    AuthService.authService.getCurrentUser();
+                                if (user == null) {
+                                  Get.offAndToNamed('/signIn');
+                                }
+                              },
+                              child: const Text(
+                                'OK',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
                     },
                     child: SettingsTile(
                         icon: Icons.logout,
@@ -142,9 +168,9 @@ class ProfilePage extends StatelessWidget {
 
 ListTile SettingsTile(
     {required IconData icon,
-      required String title,
-      required String subtitle,
-      Color iconColor = Colors.black}) {
+    required String title,
+    required String subtitle,
+    Color iconColor = Colors.black}) {
   return ListTile(
     leading: Icon(icon, color: iconColor),
     title: Text(

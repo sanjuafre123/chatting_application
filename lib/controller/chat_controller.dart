@@ -17,6 +17,14 @@ class ChatController extends GetxController {
   RxBool isEditing = false.obs;
   RxString messageIdToEdit = ''.obs;
 
+  // to store image which send by the user
+  RxString imageStore = ''.obs;
+
+  // storing image picked by user to upload it on storage
+  void uploadImageToStorage(String url) {
+    imageStore.value = url;
+  }
+
   void gerReceiver(String email, String name) {
     receiverName.value = name;
     receiverEmail.value = email;

@@ -10,13 +10,14 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../services/auth_service.dart';
 import '../../services/cloud_fire_store_service.dart';
 import '../../services/local_notification_service.dart';
+import '../../services/storage_services.dart';
 
 var chatController = Get.put(ChatController());
 
 class ChatPage extends StatefulWidget {
   final String? img;
 
-  ChatPage({super.key, this.img});
+  const ChatPage({super.key, this.img});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -169,20 +170,58 @@ class _ChatPageState extends State<ChatPage> {
                                             CrossAxisAlignment.end,
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Text(
-                                            chatList[index].message!,
-                                            style: TextStyle(
-                                              color: chatList[index].sender ==
-                                                      AuthService.authService
-                                                          .getCurrentUser()!
-                                                          .email!
-                                                  ? Colors
-                                                      .white // Text color for sent messages
-                                                  : Colors.black,
-                                              // Text color for received messages
-                                              fontSize: w * 0.042,
-                                            ),
-                                          ),
+                                          chatList[index].image!.isEmpty
+                                              ? Text(
+                                                  chatList[index].message!,
+                                                  style: TextStyle(
+                                                    color: chatList[index]
+                                                                .sender ==
+                                                            AuthService
+                                                                .authService
+                                                                .getCurrentUser()!
+                                                                .email
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                    fontSize: 16,
+                                                  ),
+                                                )
+                                              : Image.network(
+                                                  chatList[index].image!,
+                                                  fit: BoxFit.cover,
+                                                  height: 200,
+                                                  loadingBuilder:
+                                                      (BuildContext context,
+                                                          Widget child,
+                                                          ImageChunkEvent?
+                                                              loadingProgress) {
+                                                    if (loadingProgress ==
+                                                        null) {
+                                                      return child;
+                                                    }
+                                                    return Center(
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        value: loadingProgress
+                                                                    .expectedTotalBytes !=
+                                                                null
+                                                            ? loadingProgress
+                                                                    .cumulativeBytesLoaded /
+                                                                (loadingProgress
+                                                                        .expectedTotalBytes ??
+                                                                    1)
+                                                            : null,
+                                                      ),
+                                                    );
+                                                  },
+                                                  errorBuilder: (context, error,
+                                                      stackTrace) {
+                                                    return const Text(
+                                                      'Image failed to load',
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    );
+                                                  },
+                                                ),
                                           SizedBox(
                                             height: h * 0.002,
                                             width: w * 0.02,
@@ -261,7 +300,8 @@ class _ChatPageState extends State<ChatPage> {
                     cursorColor: Colors.black,
                     controller: chatController.txtMessage,
                     decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 14),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 14),
                       filled: true,
                       fillColor: Colors.grey.shade100,
                       hintText: 'Write your message',
@@ -280,44 +320,77 @@ class _ChatPageState extends State<ChatPage> {
                           color: Colors.grey.shade100,
                         ),
                       ),
-                      suffixIcon: IconButton(
-                        onPressed: () async {
-                          String message =
-                              chatController.txtMessage.text.trim();
+                      suffixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            onPressed: () async {
+                              String url = await StorageServices.storageServices
+                                  .uploadImageToStorage();
+                              chatController.uploadImageToStorage(url);
+                            },
+                            icon: const Icon(Icons.image),
+                          ),
+                          IconButton(
+                            onPressed: () async {
+                              String message =
+                                  chatController.txtMessage.text.trim();
 
-                          if (message.isNotEmpty) {
-                            ChatModal chat = ChatModal(
-                              sender: AuthService.authService
-                                  .getCurrentUser()!
-                                  .email!,
-                              receiver: chatController.receiverEmail.value,
-                              message: chatController.txtMessage.text,
-                              time: Timestamp.now(),
-                            );
-                            await CloudFireStoreService.cloudFireStoreService
-                                .addChatInFireStore(chat);
+                              if (chatController.imageStore.value.isNotEmpty) {
+                                ChatModal chat = ChatModal(
+                                  time: Timestamp.now(),
+                                  receiver: chatController.receiverEmail.value,
+                                  message: message,
+                                  sender: AuthService.authService
+                                      .getCurrentUser()!
+                                      .email,
+                                  image: chatController.imageStore.value,
+                                );
+                                chatController.txtMessage.clear();
+                                chatController.uploadImageToStorage("");
+                                await CloudFireStoreService
+                                    .cloudFireStoreService
+                                    .addChatInFireStore(chat);
+                              }
 
-                            await LocalNotificationService.notificationService
-                                .showNotification(
-                                    AuthService.authService
-                                        .getCurrentUser()!
-                                        .email!,
-                                    chatController.txtMessage.text);
+                              if (message.isNotEmpty) {
+                                ChatModal chat = ChatModal(
+                                  image: '',
+                                  sender: AuthService.authService
+                                      .getCurrentUser()!
+                                      .email!,
+                                  receiver: chatController.receiverEmail.value,
+                                  message: chatController.txtMessage.text,
+                                  time: Timestamp.now(),
+                                );
+                                await CloudFireStoreService
+                                    .cloudFireStoreService
+                                    .addChatInFireStore(chat);
 
-                            chatController.txtMessage.clear();
-                            _scrollToBottom();
-                            CloudFireStoreService.cloudFireStoreService
-                                .changeOnlineStatus(
-                              true,
-                              Timestamp.now(),
-                              false,
-                            );
-                          }
-                        },
-                        icon: const Icon(
-                          Icons.send,
-                          color: Color(0xff3c4a7a),
-                        ),
+                                await LocalNotificationService
+                                    .notificationService
+                                    .showNotification(
+                                        AuthService.authService
+                                            .getCurrentUser()!
+                                            .email!,
+                                        chatController.txtMessage.text);
+
+                                chatController.txtMessage.clear();
+                                _scrollToBottom();
+                                CloudFireStoreService.cloudFireStoreService
+                                    .changeOnlineStatus(
+                                  true,
+                                  Timestamp.now(),
+                                  false,
+                                );
+                              }
+                            },
+                            icon: const Icon(
+                              Icons.send,
+                              color: Color(0xff3c4a7a),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -362,12 +435,11 @@ class _ChatPageState extends State<ChatPage> {
           children: [
             Text(
               chatController.receiverName.value,
-              style:  GoogleFonts.gideonRoman(
-                wordSpacing: 0.5,
-                color: Colors.black,
-                fontSize: 17.5,
-                fontWeight: FontWeight.w600
-              ),
+              style: GoogleFonts.gideonRoman(
+                  wordSpacing: 0.5,
+                  color: Colors.black,
+                  fontSize: 17.5,
+                  fontWeight: FontWeight.w600),
             ),
             StreamBuilder(
               stream: CloudFireStoreService.cloudFireStoreService
@@ -403,13 +475,22 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ],
         ),
-        SizedBox(width: width*0.032,),
-        IconButton(onPressed: () {
-
-        }, icon: Icon(Icons.call,color: Colors.grey,)),
-        IconButton(onPressed: () {
-
-        }, icon: Icon(Icons.videocam_outlined,size: 28,color: Colors.grey,)),
+        SizedBox(
+          width: width * 0.032,
+        ),
+        IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.call,
+              color: Colors.grey,
+            )),
+        IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.videocam_outlined,
+              size: 28,
+              color: Colors.grey,
+            )),
         const Spacer(),
         // _buildCallAndVideoButtons(),
         PopupMenuButton(

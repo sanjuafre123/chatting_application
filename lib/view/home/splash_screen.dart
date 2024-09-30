@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.forward();
 
     Timer(
-      const Duration(seconds: 1),
+      const Duration(seconds: 4),
           () {
         Navigator.of(context).pushNamed('/Auth');
       },

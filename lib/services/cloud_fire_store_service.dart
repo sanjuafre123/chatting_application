@@ -127,4 +127,19 @@ class CloudFireStoreService {
       String email) {
     return fireStore.collection("users").doc(email).snapshots();
   }
+
+  Future<void> updateMessageReadStatus(String receiver, String dcId) async {
+    String? sender = AuthService.authService.getCurrentUser()!.email;
+    List<String> doc = [sender!, receiver];
+    doc.sort();
+    String docId = doc.join("_");
+
+    await fireStore.collection('chatroom').doc(docId).collection('chat')
+        .doc(dcId).update({'isRead': true});
+  }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> checkUserIsOnlineOrNot(
+      String email) {
+    return fireStore.collection("users").doc(email).snapshots();
+  }
 }

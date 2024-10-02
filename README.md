@@ -1,5 +1,12 @@
 # chat_app
 
+## Description
+
+The chat app is a dynamic messaging platform built with Flutter, featuring Firebase Firestore for real-time data storage and Firebase Storage for media uploads. It uses GetX for efficient state management, ensuring smooth navigation and instant updates. Users can send text messages, share images, and manage conversations with features like deleting and updating messages.
+
+Authentication is handled via Firebase, supporting login with email/password and Google Sign-In for secure, flexible access. The app also integrates ZEGOCLOUD for high-quality audio and video calls, allowing users to switch between text and live communication seamlessly.
+
+With a clean, modern UI, the app offers real-time features like typing indicators, message receipts, and user presence status. Its powerful functionality and user-friendly design make it a complete communication solution, combining messaging, media sharing, and calling in one app.
 
 <img src="https://github.com/user-attachments/assets/b673d6b3-f756-4474-812c-fc1850dbad26" height=65% width=22%>
 <img src="https://github.com/user-attachments/assets/2389f1d0-7452-4841-b30f-b03ac8da57d2" height=65% width=22%>
